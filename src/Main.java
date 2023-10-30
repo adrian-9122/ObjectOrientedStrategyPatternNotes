@@ -1,5 +1,5 @@
 import java.util.*;
-
+// This is an example of the Strategy Pattern.
 class Course{
     private String _cnum;
     private int _credits;
@@ -36,7 +36,7 @@ class StudentSearch implements SearchBehavior<Student, String>{
         return obj.getNumber().equals(v);
     }
 }
-class AllItems<T> {
+class AllItems<T> { // creating a generic class, templated classes are all generic
     private ArrayList<T> items;
 
     public AllItems(){
@@ -71,6 +71,11 @@ class AllItems<T> {
     public void remove(int i) {
         items.remove(i);
     }
+
+    public void removeItem(int i) {
+        if (i >=0 && i < items.size())
+            items.remove(i);
+    }
 }
 class AllStudents{
     private AllItems<Student> _students;
@@ -81,40 +86,14 @@ class AllStudents{
         _students.addItem(new Student(id));
     }
     public boolean isStudent(String id){
-        int i=0;
-        boolean found = false;
-        while (i<_students.size() && !found){
-            if (_students.getItem(i).getID().equals(id))
-                found = true;
-            else
-                i++;
-        }
-        return found;
+        return _students.isItem(id, new StudentSearch());
     }
     public int findStudent(String id){
-        int i=0;
-        boolean found = false;
-        while (i<_students.size() && !found){
-            if (_students.getItem(i).getID().equals(id))
-                found = true;
-            else
-                i++;
-        }
-        if (!found)
-            return -1;
-        return i;
+        return _students.findItem(id, new StudentSearch());
     }
     public void removeStudent(String id){
-        int i=0;
-        boolean found = false;
-        while (i<_students.size() && !found){
-            if (_students.getItem(i).getID().equals(id)) {
-                _students.remove(i);
-                found = true;
-            }
-            else
-                i++;
-        }
+        int i = _students.findItem(id, new StudentSearch());
+        _students.removeItem(i);
     }
     public String toString(){
         String s = "Students:\n";
@@ -132,15 +111,7 @@ class AllCourses{
         _courses.addItem(new Course(cnum, c));
     }
     public boolean isCourse(String cnum){
-        int i=0;
-        boolean found = false;
-        while (i<_courses.size() && !found){
-            if (_courses.getItem(i).getNumber().equals(cnum))
-                found = true;
-            else
-                i++;
-        }
-        return found;
+        return _courses.isItem(cnum, new CourseSearch());
     }
     public int findCourse(String cnum){
         int i=0;
@@ -156,16 +127,8 @@ class AllCourses{
         return i;
     }
     public void removeCourse(String cnum){
-        int i=0;
-        boolean found = false;
-        while (i<_courses.size() && !found){
-            if (_courses.getItem(i).getNumber().equals(cnum)) {
-                _courses.remove(i);
-                found = true;
-            }
-            else
-                i++;
-        }
+        int i = _courses.findItem(cnum, new CourseSearch());
+        _courses.remove(i);
     }
     public String toString(){
         String s = "Courses:\n";
@@ -202,5 +165,8 @@ public class Main {
         System.out.println(ac);
         System.out.println("Is Course CSC3250: " + ac.isCourse("CSC3250") );
         System.out.println("Find Course CSC3250: " + ac.findCourse("CSC3250"));
+
+
+
     }
 }
